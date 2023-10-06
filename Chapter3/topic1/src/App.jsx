@@ -1,38 +1,24 @@
-import { useState } from "react";
-import "./App.css";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import PComparison from "./pages/PComparison";
+import Home from "./pages/Home";
+import Header from "./components/Header";
+import ModuleStyles from "./pages/ModuleStyles";
+import Students from "./pages/Students";
 
 function App() {
-  const [personOne, setPersonOne] = useState("");
-  const [personTwo, setPersonTwo] = useState("");
-  const [isSamePerson, setIsSamePerson] = useState(false);
-
-  const checkIsSamePerson = () => {
-    if (personOne === personTwo) {
-      setIsSamePerson(true);
-    } else {
-      setIsSamePerson(false);
-    }
-  };
-
   return (
-    <>
-      <div>
-        <label htmlFor="personOne">Orang Pertama : </label>
-        <input type="text" value={personOne} onChange={(event) => setPersonOne(event.target.value)} />
-      </div>
-      <div>
-        <label htmlFor="personTwo">Orang kedua : </label>
-        <input type="text" value={personTwo} onChange={(event) => setPersonTwo(event.target.value)} />
-      </div>
-      <div>
-        <button type="submit" onClick={checkIsSamePerson}>Check...</button>
-      </div>
-      <div>
-        <h2>
-          {isSamePerson ? "ini adalah orang yang sama" : "ini adalah orang yang berbeda"}
-        </h2>
-      </div>
-    </>
+    <BrowserRouter>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/PComparison" element={<PComparison />} />
+        <Route path="/module-styles" element={<ModuleStyles />} />
+        <Route path="/Students" element={<Students />} />
+
+        <Route path="*" element={<h1>404 Not Found</h1>} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
