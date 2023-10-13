@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button, Card, Container, Form } from "react-bootstrap";
 import axios from "axios";
+import GoogleLogin from "../components/GoogleLogin";
 // import { useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -10,6 +11,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const login = async (event) => {
+    // Prevent default is to prevent the default behavior
     event.preventDefault();
 
     try {
@@ -20,16 +22,15 @@ const Login = () => {
       const { data } = response.data;
       const { token } = data;
 
-      //save our token
+      // Save our token
       localStorage.setItem("token", token);
 
-      //Redirect to home
+      // Redirect to home
       // navigate("/");
+
+      // Redirect to home or reload the home
+      // This is temporary solution, the better solution is using redux
       window.location.replace("/");
-
-
-
-      console.log(data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         alert(error?.response?.data?.message);
@@ -45,31 +46,39 @@ const Login = () => {
       <Card>
         <Card.Header>Login</Card.Header>
         <Card.Body>
-          <Form onSubmit={login}>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-              <Form.Label>Email address</Form.Label>
-              <Form.Control
-                type="email"
-                placeholder="Enter email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-              />
-            </Form.Group>
+          <div className="row">
+            <div className="col">
+              <Form onSubmit={login} className="mb-4">
+                <Form.Group className="mb-3" controlId="formBasicEmail">
+                  <Form.Label>Email address</Form.Label>
+                  <Form.Control
+                    type="email"
+                    placeholder="Enter email"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                  />
+                </Form.Group>
 
-            <Form.Group className="mb-3" controlId="formBasicPassword">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-              />
-            </Form.Group>
+                <Form.Group className="mb-3" controlId="formBasicPassword">
+                  <Form.Label>Password</Form.Label>
+                  <Form.Control
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                  />
+                </Form.Group>
 
-            <Button variant="primary" type="submit">
-              Submit
-            </Button>
-          </Form>
+                <Button variant="primary" type="submit">
+                  Submit
+                </Button>
+              </Form>
+            </div>
+            <div className="col-auto">OR</div>
+            <div className="col">
+              <GoogleLogin buttonText={"Login with Google"} />
+            </div>
+          </div>
         </Card.Body>
       </Card>
     </Container>

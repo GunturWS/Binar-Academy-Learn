@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Col, Container, Row } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import MovieItem from "../components/MoviItem"
+import MovieItem from "../components/MoviItem";
 
 const Home = () => {
-  const navigate = useNavigate();
-
   const [popularMovies, setPopularMovies] = useState([]);
   const [errors, setErrors] = useState({
     isError: false,
@@ -14,41 +11,12 @@ const Home = () => {
   });
 
   useEffect(() => {
-    const getMe = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          return navigate("/login");
-        }
-
-        await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/auth/me`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          if (error.response.status === 401) {
-            localStorage.removeItem("token");
-            return navigate("/login");
-          }
-
-          alert(error?.response?.data?.message);
-          return;
-        }
-
-        alert(error?.message);
-      }
-    };
-
-    getMe();
-  }, []);
-
-  useEffect(() => {
     const getPopularMovies = async () => {
       try {
         // Get token from local storage
         const token = localStorage.getItem("token");
+
+        // If the token is not exist in the local storage
         if (!token) return;
 
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/movie/popular`, {
