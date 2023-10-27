@@ -1,55 +1,25 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Button, Container, Nav, Navbar } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getMe, logout } from "../redux/actions/authActions";
 
 function NavbarComponent() {
-  const [user, setUser] = useState(null);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const logout = (event) => {
-    event.preventDefault();
+  const { user, token } = useSelector((state) => state.auth);
 
-    localStorage.removeItem("token");
-
-    // Redirect to home or reload the home
-    // This is temporary solution, the better solution is using redux
-    window.location.replace("/");
+  const onLogout = () => {
+    dispatch(logout());
+    navigate("/login");
   };
 
   useEffect(() => {
-    const getMe = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/auth/me`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const { data } = response.data;
-
-        // Set the user state from API data
-        setUser(data);
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          // If token is not valid
-          if (error.response.status === 401) {
-            localStorage.removeItem("token");
-            return;
-          }
-
-          alert(error?.response?.data?.message);
-          return;
-        }
-
-        alert(error?.message);
-      }
-    };
-
-    getMe();
-  }, []);
+    if (token) {
+      dispatch(getMe(navigate, null, "/login"));
+    }
+  }, [dispatch, navigate, token]);
 
   return (
     <Navbar expand="lg" className="bg-body-tertiary">
@@ -79,7 +49,7 @@ function NavbarComponent() {
                 <Nav.Link as={Link} to="/myprofile">
                   {user?.name}
                 </Nav.Link>
-                <Nav.Link as={Button} onClick={logout}>
+                <Nav.Link as={Button} onClick={onLogout}>
                   Logout
                 </Nav.Link>
               </>
